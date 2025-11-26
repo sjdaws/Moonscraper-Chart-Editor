@@ -14,7 +14,7 @@ using MoonscraperChartEditor.Song;
 public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
 {
     [SerializeField]
-    GameObject handle;
+    GameObject handle = null;
     public UnityEngine.UI.Text percentage;
     public GameObject sectionIndicatorPrefab;
     public GameObject starpowerIndicatorPrefab;
@@ -128,7 +128,7 @@ public class TimelineHandler : MonoBehaviour, IDragHandler, IPointerDownHandler
         bool update = (!ReferenceEquals(prevSong, editor.currentSong) || prevSongLength != editor.currentSongLength
              || previousScreenSize.x != Screen.width || previousScreenSize.y != Screen.height || 
              prevRes.height != Screen.currentResolution.height ||
-             prevRes.width != Screen.currentResolution.width || prevRes.refreshRate != Screen.currentResolution.refreshRate);
+             prevRes.width != Screen.currentResolution.width || prevRes.refreshRateRatio.value != Screen.currentResolution.refreshRateRatio.value);
 
         // Check if indicator pools need to be extended
         

@@ -11,11 +11,8 @@ public class BuildManager  {
     const string applicationName = "Moonscraper Chart Editor";
 
     // 7-Zip.exe location
-    static readonly string CompressionProgramPath = System.Environment.GetEnvironmentVariable("7-Zip");
+    static readonly string CompressionProgramPath = System.Environment.GetEnvironmentVariable("SEVENZIP") != null ? System.Environment.GetEnvironmentVariable("SEVENZIP") : System.Environment.GetEnvironmentVariable("7-Zip");
 
-    // Security Patch application location
-    static readonly string UnityApplicationPatcherProgramPath = Path.GetFullPath(Path.Combine(Application.dataPath, "../../UnityApplicationPatcher-1.0.6-Win/UnityApplicationPatcherCLI.exe"));
-    
     // Inno Setup 6 ISCC.exe location
     static readonly string InstallerProgramPath = System.Environment.GetEnvironmentVariable("ISCC");
 
@@ -40,10 +37,10 @@ public class BuildManager  {
         BuildSpecificTargetDistributable(BuildTarget.StandaloneWindows);
     }
 
-    [MenuItem("Build Processes/Linux Universal Distributable")]
+    [MenuItem("Build Processes/Linux x64 Distributable")]
     public static void BuildLinux()
     {
-        BuildSpecificTargetDistributable(BuildTarget.StandaloneLinuxUniversal);
+        BuildSpecificTargetDistributable(BuildTarget.StandaloneLinux64);
     }
 
     [MenuItem("Build Processes/Build Full Distributables")]
@@ -86,7 +83,7 @@ public class BuildManager  {
         string folderName = Application.productName;
         if ((buildFlags & BuildFlags.SpecifyVersionNumber) != 0)
         {
-            folderName += string.Format(" v{0}", Application.productName);
+            folderName += string.Format(" v{0}", Application.version);
         }
 
         if (!string.IsNullOrEmpty(Globals.applicationBranchName))
@@ -104,7 +101,7 @@ public class BuildManager  {
         BuildTarget[] targets = {
             BuildTarget.StandaloneWindows64,
             BuildTarget.StandaloneWindows,
-            BuildTarget.StandaloneLinuxUniversal
+            BuildTarget.StandaloneLinux64
         };
 
         foreach (var target in targets) {
@@ -126,16 +123,6 @@ public class BuildManager  {
         string chosenPath = EditorUtility.SaveFolderPanel("Choose Location of Built Game", "", "");
 
         return chosenPath;
-    }
-
-    enum UnityApplicationPatcher_ExitCode
-    {
-        Success = 0,
-        PatchFailed = 1,
-        PatchNotFound = 2,
-        ExceptionCaught = 3,
-        InvalidCommandLineArg = 64,
-        PatchAlreadyApplied = 183,
     }
 
     static void BuildSpecificTargetDistributable(BuildTarget buildTarget) {
@@ -178,8 +165,8 @@ public class BuildManager  {
             installerCompileScriptPath = "MSCE Windows.iss";
             installerPlatform = "x64";
             break;
-        case BuildTarget.StandaloneLinuxUniversal:
-            architecture = "Linux (Universal)";
+        case BuildTarget.StandaloneLinux64:
+            architecture = "Linux (64 bit)";
             executableName = applicationName;
             compressionExtension = ".tar.gz";
 
@@ -226,36 +213,6 @@ public class BuildManager  {
 
         if (report.summary.result != UnityEditor.Build.Reporting.BuildResult.Succeeded)
             return;
-
-        switch (buildTarget)
-        {
-            case BuildTarget.StandaloneWindows:
-            case BuildTarget.StandaloneWindows64:
-                {
-                    Debug.Log("Applying security patch");
-
-                    UnityApplicationPatcher_ExitCode resultCode = RunUnityApplicationPatcher(path, string.Format("-windows -applicationPath \"{0}\"", path));
-                    switch (resultCode)
-                    {
-                        case UnityApplicationPatcher_ExitCode.Success:
-                        case UnityApplicationPatcher_ExitCode.PatchAlreadyApplied:
-                            {
-                                break;
-                            }
-                        default:
-                            {
-                                Debug.LogErrorFormat("Application patch failed due to code {0}. Aborting build", resultCode);
-                                return;
-                            }
-                    }
-                    break;
-                }
-
-            default:
-                {
-                    break;
-                }
-        }  
 
         if (Directory.Exists("Assets/Custom Resources"))
         {
@@ -436,36 +393,5 @@ public class BuildManager  {
         }
 
         Debug.Log("Build target complete!");
-    }
-
-    /// <returns>Exit code</returns>
-    static UnityApplicationPatcher_ExitCode RunUnityApplicationPatcher(string workingDirectoryPath, string args)
-    {
-        using (var process = new System.Diagnostics.Process())
-        {
-            process.StartInfo.FileName = UnityApplicationPatcherProgramPath;
-            process.StartInfo.WorkingDirectory = workingDirectoryPath;
-            process.StartInfo.Arguments = args;
-            process.StartInfo.RedirectStandardOutput = true;
-            process.StartInfo.RedirectStandardError = true;
-            process.StartInfo.UseShellExecute = false;
-            process.OutputDataReceived += (sender, e) => {
-                if (e.Data != null)
-                    Debug.Log(e.Data);
-            };
-            process.ErrorDataReceived += (sender, e) =>{
-                if (e.Data != null)
-                    Debug.LogError(e.Data);
-            };
-
-            process.Start();
-
-            process.BeginOutputReadLine();
-            process.BeginErrorReadLine();
-
-            process.WaitForExit();
-
-            return (UnityApplicationPatcher_ExitCode)process.ExitCode;
-        }
     }
 }
