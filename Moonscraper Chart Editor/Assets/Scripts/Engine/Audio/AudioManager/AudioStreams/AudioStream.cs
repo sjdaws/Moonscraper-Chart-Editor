@@ -1,10 +1,7 @@
 ﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
-#if BASS_AUDIO
-using Un4seen.Bass;
-#endif
-
+using ManagedBass;
 using UnityEngine;
 using System.Collections.Generic;
 
@@ -54,9 +51,9 @@ namespace MoonscraperEngine.Audio
         {
             CurrentPositionSeconds = playPoint;
 
-            if (!Bass.BASS_ChannelPlay(audioHandle, restart))
+            if (!Bass.ChannelPlay(audioHandle, restart))
             {
-                Debug.LogError($"AudioStream BASS_ChannelPlay error on {this.GetType()} handle {audioHandle}: {Bass.BASS_ErrorGetCode()}");
+                Debug.LogError($"AudioStream BASS_ChannelPlay error on {this.GetType()} handle {audioHandle}: {Bass.LastError}");
             }
 
             return true;
@@ -78,17 +75,17 @@ namespace MoonscraperEngine.Audio
 
         public virtual void Stop()
         {
-            if (!Bass.BASS_ChannelStop(audioHandle))
+            if (!Bass.ChannelStop(audioHandle))
             {
-                Debug.LogError($"AudioStream BASS_ChannelStop error on handle {audioHandle}: {Bass.BASS_ErrorGetCode()}");
+                Debug.LogError($"AudioStream BASS_ChannelStop error on handle {audioHandle}: {Bass.LastError}");
             }
 
             // Synchronisation is only temporary as user may add or remove streams between different play sessions. 
             foreach (int stream in childSyncedStreams)
             {
-                if (!Bass.BASS_ChannelRemoveLink(this.audioHandle, stream))
+                if (!Bass.ChannelRemoveLink(this.audioHandle, stream))
                 {
-                    var bassError = Bass.BASS_ErrorGetCode();
+                    var bassError = Bass.LastError;
                     Debug.LogError($"AudioStream ClearSyncedStreams error on handle {this.audioHandle}: {bassError}");
                 }
             }
@@ -98,32 +95,32 @@ namespace MoonscraperEngine.Audio
 
         public long ChannelLengthInBytes()
         {
-            return Bass.BASS_ChannelGetLength(audioHandle, BASSMode.BASS_POS_BYTES);
+            return Bass.ChannelGetLength(audioHandle, PositionFlags.Bytes);
         }
 
         public float ChannelLengthInSeconds()
         {
-            return (float)Bass.BASS_ChannelBytes2Seconds(audioHandle, ChannelLengthInBytes());
+            return (float)Bass.ChannelBytes2Seconds(audioHandle, ChannelLengthInBytes());
         }
 
         public long ChannelSecondsToBytes(double position)
         {
-            return Bass.BASS_ChannelSeconds2Bytes(audioHandle, position);
+            return Bass.ChannelSeconds2Bytes(audioHandle, position);
         }
 
         public float CurrentPositionSeconds
         {
             get
             {
-                long bytePos = Bass.BASS_ChannelGetPosition(audioHandle);
-                double elapsedtime = Bass.BASS_ChannelBytes2Seconds(audioHandle, bytePos);
-                return (float)elapsedtime;
+                long bytePos = Bass.ChannelGetPosition(audioHandle);
+                double elapsedtime = Bass.ChannelBytes2Seconds(audioHandle, bytePos);
+                return (long)elapsedtime;
             }
             set
             {
-                if (!Bass.BASS_ChannelSetPosition(audioHandle, value))
+                if (!Bass.ChannelSetPosition(audioHandle, ChannelSecondsToBytes((double)value)))
                 {
-                    var bassError = Bass.BASS_ErrorGetCode();
+                    var bassError = Bass.LastError;
                     Debug.LogError($"AudioStream BASS_ChannelSetPosition error on {this.GetType()} handle {audioHandle}: {bassError}");
                 }
             }
@@ -131,12 +128,12 @@ namespace MoonscraperEngine.Audio
 
         public bool GetChannelLevels(ref float[] levels, float length)
         {
-            return Bass.BASS_ChannelGetLevel(audioHandle, levels, length, BASSLevel.BASS_LEVEL_STEREO);
+            return Bass.ChannelGetLevel(audioHandle, levels, length, LevelRetrievalFlags.Stereo);
         }
 
         public bool IsPlaying()
         {
-            return isValid && Bass.BASS_ChannelIsActive(audioHandle) == BASSActive.BASS_ACTIVE_PLAYING;
+            return isValid && Bass.ChannelIsActive(audioHandle) == PlaybackState.Playing;
         }
 
         // Call this before playing any audio
@@ -145,13 +142,13 @@ namespace MoonscraperEngine.Audio
             if (audioHandle == childStream.audioHandle)
                 return;
 
-            if (Bass.BASS_ChannelSetLink(this.audioHandle, childStream.audioHandle))
+            if (Bass.ChannelSetLink(this.audioHandle, childStream.audioHandle))
             {
                 childSyncedStreams.Add(childStream.audioHandle);
             }
             else
             {
-                var bassError = Bass.BASS_ErrorGetCode();
+                var bassError = Bass.LastError;
                 Debug.LogError("AudioStream SyncWithStream error: " + bassError);
             }
         }

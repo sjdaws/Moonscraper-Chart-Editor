@@ -1,3 +1,17 @@
+1.6.1
+	FIXES
+	-Offload Linux OGG encoding to OS ffmpeg installation for greater compatibility
+
+	CHANGES
+	-Update BASS to 2.4.18
+	-Update BASSOPUS to 2.4.3
+	-Update BASSEnc to 2.4.17
+	-Update BASSEnc_OGG to 2.4.3
+	-Update BASSEnc_OPUS to 2.4.4
+	-Update BASS FX to 2.4.12.6
+	-Align BASS libraries across Linux/Windows
+	-Replace Bass.Net with ManagedBass 4.0.2
+
 1.6.0
     CHANGES
     -Update Unity engine to 6000.0.62f1 (Long Term Support)
