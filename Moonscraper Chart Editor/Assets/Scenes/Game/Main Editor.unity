@@ -48855,64 +48855,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "www.un4seen.com\n\nBASS 2.4\nCopyright (c) 1999-2016 Un4seen Developments
-    Ltd. All rights reserved.\n\n----------------------------------------------------------------------------------------\n\nBASS.NET
-    API: Copyright 2005-2016 by radio42, Author: Bernd Niedergesaess  (bn@radio42.com).
-    All rights reserved. \nBASS.NET is the property of radio42 and is protected by
-    copyright laws and international copyright treaties. BASS.NET is not sold, it
-    is licensed.\nBASS and Add-Ons: All trademarks and other registered names contained
-    in the BASS.NET package are the property of their respective owners.\n\n----------------------------------------------------------------------------------------\n\nhttps://github.com/gkngkc/UnityStandaloneFileBrowser\n\nMIT
-    License\n\nCopyright (c) 2017 Gokhan Gokce\n\nPermission is hereby granted, free
-    of charge, to any person obtaining a copy\nof this software and associated documentation
-    files (the \"Software\"), to deal\nin the Software without restriction, including
-    without limitation the rights\nto use, copy, modify, merge, publish, distribute,
-    sublicense, and/or sell\ncopies of the Software, and to permit persons to whom
-    the Software is\nfurnished to do so, subject to the following conditions:\n\nThe
-    above copyright notice and this permission notice shall be included in all\ncopies
-    or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\",
-    WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED
-    TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-    IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-    DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
-    ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-    DEALINGS IN THE\nSOFTWARE.\n\n----------------------------------------------------------------------------------------\n\nXInputDotNet\n\nThe
-    MIT License\n\nCopyright (c) 2009 Remi Gillig <remigillig@gmail.com>\n\nPermission
-    is hereby granted, free of charge, to any person obtaining a copy\nof this software
-    and associated documentation files (the \"Software\"), to deal\nin the Software
-    without restriction, including without limitation the rights\nto use, copy, modify,
-    merge, publish, distribute, sublicense, and/or sell\ncopies of the Software,
-    and to permit persons to whom the Software is\nfurnished to do so, subject to
-    the following conditions:\n\nThe above copyright notice and this permission notice
-    shall be included in\nall copies or substantial portions of the Software.\n\nTHE
-    SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED,
-    INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR
-    A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT
-    HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION
-    OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE
-    SOFTWARE OR THE USE OR OTHER DEALINGS IN\nTHE SOFTWARE.\n\n----------------------------------------------------------------------------------------\n\nStandard
-    note, star note and open note model-\nProvided by sandsky0 from the Rhythm Gaming
-    Community Discord server (downloaded on 06/12/16 - 23/12/2016)\n\n----------------------------------------------------------------------------------------\n\nEraser
-    UI Icon- http://icongal.com/gallery/icon/8544/24/eraser\nCopyright (C) 2010 Yusuke
-    Kamiyamane. All rights reserved. \nThe icons are licensed under a Creative Commons
-    Attribution \n3.0 license. http://creativecommons.org/licenses/by/3.0/\n(as of
-    20/12/2016)\n\n----------------------------------------------------------------------------------------\n\nMetronome
-    UI Icon- https://www.iconfinder.com/icons/64462/metronome_icon\nCopyright (C)
-    2011 FatCow Web Hosting. All rights reserved. \nThe icons are licensed under
-    a Creative Commons Attribution \n3.0 Unported License (US). https://creativecommons.org/licenses/by/3.0/us/\n(as
-    of 21/20/2016)\n\n----------------------------------------------------------------------------------------\n\nClap
-    sound- https://www.freesound.org/people/ERH/sounds/31348/ \nCopyright (C) 2007
-    ERH. All rights reserved. \nThe icons are licensed under a Creative Commons Attribution
-    \n3.0 license. https://creativecommons.org/licenses/by/3.0/\n(as of 17/10/16)\n\n----------------------------------------------------------------------------------------\n\nBass/guitar/instrument/music/rock
-    icon- https://www.iconfinder.com/icons/16874/bass_guitar_instrument_music_rock_icon\nCopyright
-    (C) Christian F. Burprich. All rights reserved. \nThe icons are licensed under
-    a Creative Commons \nAttribution-Noncommercial-Share Alike 3.0 Unported \nlicense.
-    https://creativecommons.org/licenses/by-nc-sa/3.0/)\nChanges: Removed \"gp5\"
-    text.\n\n----------------------------------------------------------------------------------------\n\nUndo
-    Icon from Turbomilk - http://www.turbomilk.com/\n  Further edited for redo image.\n\n----------------------------------------------------------------------------------------\n\nFlag
-    Icon- https://www.iconfinder.com/icons/32476/event_flag_gps_location_marker_monotone_pin_icon\nCopyright
-    (C) Aha-Soft. All rights reserved. \nThe icons are licensed under a Creative
-    Commons Attribution \n3.0 Unported License (US). https://creativecommons.org/licenses/by/3.0/us/\n(as
-    of 02/09/2017)"
+  m_Text: ""
 --- !u!222 &1986583983
 CanvasRenderer:
   m_ObjectHideFlags: 0

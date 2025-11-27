@@ -1,9 +1,7 @@
 ﻿// Copyright (c) 2016-2020 Alexander Ong
 // See LICENSE in project root for license information.
 
-#if BASS_AUDIO
-using Un4seen.Bass;
-#endif
+using ManagedBass;
 
 namespace MoonscraperEngine.Audio
 {
@@ -31,9 +29,9 @@ namespace MoonscraperEngine.Audio
 
         public override bool Play(float playPoint = 0, bool restart = false)
         {
-            int channel = Bass.BASS_SampleGetChannel(audioHandle, false);
+            int channel = Bass.SampleGetChannel(audioHandle, BassFlags.Default);
 
-            bool isPlaying = Bass.BASS_ChannelIsActive(channel) != BASSActive.BASS_ACTIVE_STOPPED && Bass.BASS_ChannelIsActive(channel) != BASSActive.BASS_ACTIVE_PAUSED;
+            bool isPlaying = Bass.ChannelIsActive(channel) != PlaybackState.Stopped && Bass.ChannelIsActive(channel) != PlaybackState.Paused;
             if (onlyPlayIfStopped && isPlaying)
             {
                 return false;
@@ -41,17 +39,17 @@ namespace MoonscraperEngine.Audio
 
             if (channel != 0)
             {
-                if (!Bass.BASS_ChannelSetAttribute(channel, BASSAttribute.BASS_ATTRIB_VOL, volume))
+                if (!Bass.ChannelSetAttribute(channel, ChannelAttribute.Volume, volume))
                 {
                     UnityEngine.Debug.LogError($"Failed to set volume attribute on one shot stream channel {channel}");
                 }
 
-                if (!Bass.BASS_ChannelSetAttribute(channel, BASSAttribute.BASS_ATTRIB_PAN, pan))
+                if (!Bass.ChannelSetAttribute(channel, ChannelAttribute.Pan, pan))
                 {
                     UnityEngine.Debug.LogError($"Failed to set pan attribute on one shot stream channel {channel}");
                 }
 
-                if (!Bass.BASS_ChannelPlay(channel, restart))
+                if (!Bass.ChannelPlay(channel, restart))
                 {
                     UnityEngine.Debug.LogError($"Failed to play one shot stream channel {channel}");
                 }
@@ -59,7 +57,7 @@ namespace MoonscraperEngine.Audio
                 return true;
             }
             else
-                UnityEngine.Debug.LogError($"Error when getting oneshot channel stream: {Bass.BASS_ErrorGetCode()}, {audioHandle}");
+                UnityEngine.Debug.LogError($"Error when getting oneshot channel stream: {Bass.LastError}, {audioHandle}");
 
             return false;
         }
