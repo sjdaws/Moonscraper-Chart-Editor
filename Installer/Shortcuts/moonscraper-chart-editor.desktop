@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Moonscraper Chart Editor
+Comment=A song editor for Guitar Hero style rhythm games
+Path=/opt/msce
+Exec=/opt/moonscraper-chart-editor/Moonscraper Chart Editor
+Icon=/opt/moonscraper-chart-editor/Moonscraper Chart Editor_Data/Resources/UnityPlayer.png
+Terminal=false
+Categories=Game;
