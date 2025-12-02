@@ -1,0 +1,74 @@
+name: Create release assets
+
+on:
+  release:
+    types:
+      - published
+
+jobs:
+  build:
+    name: Build Moonscraper
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: write
+    env:
+      build-path: ${{ github.workspace }}/build
+      project-path: ${{ github.workspace }}/Moonscraper Chart Editor
+      unity-version: 6000.0.62f1
+      unity-changeset: f99f05b3e950
+    strategy:
+      matrix:
+        include:
+          - build-method: BuildManager.ReleaseWindows
+            build-target: StandaloneWindows64
+            modules: windows-il2cpp
+            os: windows-latest
+          - build-method: BuildManager.ReleaseLinux
+            build-target: StandaloneLinux64
+            modules: linux-il2cpp
+            os: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Setup unity
+        id: unity-setup
+        uses: buildalon/unity-setup@v2
+        with:
+          build-targets: ${{ matrix.build-target }}
+          modules: ${{ matrix.modules }}
+          unity-version: ${{ env.unity-version }} (${{ env.unity-changeset }})
+      - name: Build application
+        uses: buildalon/unity-action@v3
+        env:
+          BUILD_PATH: ${{ env.build-path }}
+        with:
+          args: -quit -nographics -batchmode -executeMethod ${{ matrix.build-method }}
+          build-target: ${{ matrix.build-target }}
+          editor-path: ${{ steps.unity-setup.outputs.unity-editor-path }}
+          log-name: "-"
+          project-path: ${{ env.project-path }}
+      - name: List built files
+        if: always()
+        run: |
+          ls -R ${{ env.build-path }}
+      - name: Upload release assets
+        uses: xresloader/upload-to-github-release@v1
+        with:
+          file: ${{ env.build-path }}/*
+          release_id: ${{ github.event.release.id }}
+          verbose: true
+  release:
+    needs: build
+    name: Release Moonscraper
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Publish release
+        uses: irongut/EditRelease@v1.2.0
+        with:
+          draft: false
+          id: ${{ github.event.release.id }}
+          prerelease: false
+          token: ${{ github.token }}
+
