@@ -1,0 +1,8 @@
+Package: #PACKAGE#
+Version: #VERSION#
+Section: base
+Depends: findutils
+Priority: optional
+Architecture: amd64
+Maintainer: #PUBLISHER#
+Description: #DESCRIPTION#

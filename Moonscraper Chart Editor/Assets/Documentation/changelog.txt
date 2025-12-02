@@ -1,3 +1,9 @@
+1.7.0
+	CHANGES
+	-Remove Windows x86 build, all Windows builds will be x64 only
+	-Add .deb and .rpm packages for Linux builds
+	-Automate builds when creating a release
+
 1.6.1
 	FIXES
 	-Offload Linux OGG encoding to OS ffmpeg installation for greater compatibility
