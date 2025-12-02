@@ -491,8 +491,14 @@ public class Export : DisplayMenu {
 
                 if (!shouldCopy)
                 {
-                    Debug.LogFormat("Converting ogg from {0} to {1}", audioLocation, outputFile);
+                    Debug.LogFormat("Converting {0} to ogg file {1}", audioLocation, outputFile);
+
                     shouldCopy = !AudioManager.ConvertToOgg(audioLocation, outputFile);
+
+                    if (shouldCopy)
+                    {
+                        Debug.LogFormat("Failed to convert file, copying instead");
+                    }
                 }
 
                 if (shouldCopy)
@@ -501,10 +507,10 @@ public class Export : DisplayMenu {
                     string originalExtention = Path.GetExtension(audioLocation);
                     string destPath = Path.ChangeExtension(outputFile, originalExtention);
 
-                    Debug.LogFormat("Unable to re-encode file, copying {0} to {1}", audioLocation, destPath);
+                    Debug.LogFormat("Copying {0} to {1}", audioLocation, destPath);
                     File.Copy(audioLocation, destPath, true);
                 }
-            });         
+            });
         }
 
         for (int i = 0; i < songEncodeActions.Count; ++i)
