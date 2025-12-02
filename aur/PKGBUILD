@@ -1,13 +1,13 @@
 # Maintainer: bmwalters <oss at walters dot app>
 
 pkgname=moonscraper-chart-editor
-pkgver=1.6.0.u6000.0.62f1
+pkgver=1.0
 pkgrel=1
 pkgdesc="A song editor for Guitar Hero style rhythm games made in Unity"
 url='https://github.com/FireFox2000000/moonscraper-chart-editor'
 license=(BSD)
 arch=(x86_64)
-depends=('mono' 'sdl2' 'ffmpeg' 'libx11' 'gtk3' 'libbass' 'libbass_fx' 'libbassopus')
+depends=('mono' 'sdl2' 'ffmpeg' 'libx11' 'gtk3')
 makedepends=('git' 'unityhub' 'cmake'
   # runtime dependencies for Unity3d
   'desktop-file-utils' 'xdg-utils' 'gcc-libs' 'gconf' 'nss'
@@ -15,13 +15,12 @@ makedepends=('git' 'unityhub' 'cmake'
   # used to isolate home directory files modified by Unity3d
   'firejail')
 provides=(moonscraper-chart-editor)
-backup=("opt/$pkgname/local_events.txt"
-        "opt/$pkgname/global_events.txt"
+backup=("opt/$pkgname/Config/clone_hero_tags.txt"
+        "opt/$pkgname/Config/local_events.txt"
+        "opt/$pkgname/Config/global_events.txt"
         "opt/$pkgname/Custom Resources/settings.ini")
-source=('git+https://github.com/FireFox2000000/moonscraper-chart-editor.git#branch=master'
-        "$pkgname.desktop")
-sha256sums=('SKIP'
-            'cc10aebee30527ee5974122e85dd9bc69a8ab687d420eca663c032f8aabdeb35')
+source=('git+https://github.com/sjdaws/moonscraper-chart-editor.git#branch=minor-fixes')
+sha256sums=('SKIP')
 _unity3d_version=6000.0.62f1
 _unity3d_changeset=f99f05b3e950
 
@@ -32,45 +31,96 @@ pkgver() {
 }
 
 prepare() {
-  # Remove vendored libbass in favor of libbass dependency
-  rm -rf "$pkgname/Moonscraper Chart Editor/Assets/Plugins/Bass Audio/Linux/x64"
-  rm -f "$pkgname/Moonscraper Chart Editor/Assets/Plugins/Bass Audio/Linux/x64.meta"
+  mkdir -p "$startdir/opt/unity3d"
 }
 
 build() {
-  # Install Unity via unityhub in firejail to avoid clobbering user's existing unityhub configuration.
-  firejail --noprofile --whitelist="$(pwd)" sh <<EOF
+    # Install Unity via unityhub in firejail to avoid clobbering user's existing unityhub configuration.
+  firejail --noprofile --whitelist="$startdir" --noroot sh <<EOF
+  echo -e "\nInstalling Unity Editor $_unity3d_version, this will only need to be done once per Unity version. Future builds should be faster.\n"
   # Install appropriate unity3d version via unityhub
-  if [ ! -d "$(pwd)"/unity3d/$_unity3d_version ]; then
+  if [ ! -d "$startdir/opt/unity3d/$_unity3d_version" ]; then
     mkdir -p unity3d
-    unityhub --no-sandbox --headless install-path --set "$(pwd)"/unity3d
-    unityhub --no-sandbox --headless install --version $_unity3d_version --changeset $_unity3d_changeset
+    unityhub --no-sandbox --headless install-path --set "$startdir/opt/unity3d"
+    unityhub --no-sandbox --headless install --version $_unity3d_version --changeset $_unity3d_changeset --architecture $CARCH
+  fi
+EOF
+
+  export _user_license="$startdir/Unity_lic.ulf"
+  export _license_file="$srcdir/Unity_v$(echo "$_unity3d_version" | cut -d'.' -f1).x.ulf"
+
+  if [ -f "$_user_license" ] && [ "$(cat \"$_user_license\")" != "request" ]; then
+    cp -a "$_user_license" $_license_file
   fi
 
-  # https://github.com/mono/mono/issues/6752#issuecomment-365212655
-  export TERM=xterm
+  # Check license
+  if [ ! -f "$_license_file" ]; then
+    echo ""
+    read -p "No Unity license detected, you don't need one to build this application. Would you like to add one anyway [yN]? " unity_license
+    if [ "${unity_license#[Nn]}" != "" ]; then
+      echo -e "\nA license will be requested from your Unity account. You will prompted for your Unity credentials.\n"
+      echo -e "If you don't want to enter your Unity credentials, you can place a license file at $_user_license instead.\n"
+      read -p "Unity email: " unity_email
+      read -p "Unity password: " unity_password
+    fi
+  else
+    echo -e "\nUnity license detected, to reauthenticate delete $_license_file.\n"
+  fi
 
-  export SEVENZIP=$(which 7z)
+  # Request license
+  if [ ! -f "$_license_file" ]; then
+    if [ "${unity_email}" == "" ] || [ "${unity_password}" == "" ]; then
+      echo -e "\nUnity email or password not set, continuing without performing activation.\n"
+    else
+      "$startdir/opt/unity3d/$_unity3d_version/Editor/Unity" \
+        -batchmode \
+        -nographics \
+        -silent-crashes \
+        -createManualActivationFile \
+        -logFile - \
+        -quit
+
+      npm install unity-license-activate --prefix $startdir/opt
+      "$startdir/opt/node_modules/.bin/unity-license-activate" "$unity_email" "$unity_password" "$srcdir/Unity_v$_unity3d_version.alf"
+
+      if [ ! -f "$_license_file" ]; then
+        echo -e "\nUnity license failed to generate, continuing without performing activation.\n"
+      fi
+    fi
+  fi
+
+  # Activate license
+  if [ -f "$_license_file" ]; then
+    "$startdir/opt/unity3d/$_unity3d_version/Editor/Unity" \
+      -batchmode \
+      -manualLicenseFile "$_license_file" \
+      -nographics \
+      -silent-crashes \
+      -logFile - \
+      -quit
+  fi
 
   # Build the application using Unity in batch mode
-  "$(pwd)/unity3d/$_unity3d_version/Editor/Unity" \
-    -batchmode \
-    -nographics \
-    -silent-crashes \
-    -logFile - \
-    -projectPath "$pkgname/Moonscraper Chart Editor" \
-    -executeMethod BuildManager.BuildLinux \
-    -moonscraperBuildPath "$(pwd)/build" \
-    -quit
-EOF
+  BUILD_PATH="$srcdir/build" \
+    "$startdir/opt/unity3d/$_unity3d_version/Editor/Unity" \
+      -batchmode \
+      -nographics \
+      -silent-crashes \
+      -logFile - \
+      -disableManagedDebugger \
+      -projectPath "$pkgname/Moonscraper Chart Editor" \
+      -executeMethod BuildManager.BuildLinux \
+      -quit
+
+  unset _license_file
 }
 
 package() {
-  install -o $(whoami) -d "$pkgdir/opt/$pkgname"
+  install -d "$pkgdir/opt/$pkgname"
 
   VERSION=$(grep -oP 'bundleVersion: \K(.+)' < "$srcdir/$pkgname/Moonscraper Chart Editor/ProjectSettings/ProjectSettings.asset")
-  cp -aR "$(pwd)/build/Moonscraper Chart Editor v$VERSION Linux (64 bit)/." "$pkgdir/opt/$pkgname"
-  install -o $(whoami) -Dm 644 "$pkgname/LICENSE" "$pkgdir/opt/$pkgname/LICENSE"
+  cp -aR "$srcdir/build/Moonscraper Chart Editor v$VERSION Linux x64/." "$pkgdir/opt/$pkgname"
+  install -Dm 644 "$pkgname/LICENSE" "$pkgdir/opt/$pkgname/LICENSE"
 
   RUNVIA="$pkgdir/opt/$pkgname/Moonscraper Chart Editor"
 
@@ -78,7 +128,7 @@ package() {
   read -p "Do you want to install Moonscraper Chart Editor to /opt/$pkgname? [Yn] " optinstall
   if [ "${optinstall#[Yy]}" == "" ]; then
     echo -e "\nYou may be prompted for your password.\n"
-    sudo install -o $(whoami) -d "/opt/$pkgname"
+    sudo install -d "/opt/$pkgname"
     sudo cp -aR "$pkgdir/opt/$pkgname" "/opt"
 
     RUNVIA="/opt/$pkgname/Moonscraper Chart Editor"
@@ -86,7 +136,7 @@ package() {
     echo ""
     read -p "Do you want to install Moonscraper Chart Editor link to /usr/local/bin allowing you to to launch Moonscraper Chart Editor from terminal? [yN] " bininstall
     if [ "${bininstall#[Nn]}" != "" ]; then
-      sudo install -o $(whoami) -d /usr/local/bin
+      sudo install -d /usr/local/bin
       sudo bash -c "tee \"/usr/local/bin/$pkgname\" &>/dev/null <<EOF
 #!/bin/sh
 exec \"/opt/$pkgname/Moonscraper Chart Editor\" \"\$@\"
@@ -99,20 +149,13 @@ EOF"
     echo ""
     read -p "Do you want to add Moonscraper Chart Editor to your desktop? [yN] " desktopinstall
     if [ "${desktopinstall#[Nn]}" != "" ]; then
-      sudo install -o $(whoami) -d /usr/local/bin
-      sudo bash -c "tee \"/usr/local/bin/$pkgname\" &>/dev/null <<EOF
-#!/bin/sh
-exec \"/opt/$pkgname/Moonscraper Chart Editor\" \"\$@\"
-EOF"
-      sudo chmod 755 "/usr/local/bin/$pkgname"
+      sudo install -d "/usr/local/share/applications"
+      sudo install $srcdir/$pkgname/Installer/Shortcuts/$pkgname.desktop "/usr/local/share/applications"
 
-      sudo install -o $(whoami) -d /usr/local/share/applications /usr/local/share/pixmaps
-      sudo install $pkgname.desktop "/usr/local/share/applications"
-      sudo ln -fs "/opt/$pkgname/Moonscraper Chart Editor_Data/Resources/UnityPlayer.png" "/usr/local/share/pixmaps/$pkgname.png"
+      RUNVIA="/usr/local/share/applications/$pkgname.desktop"
     fi
 
     # Clean up
-    rm -Rf "$(pwd)/build/Moonscraper Chart Editor v$VERSION Linux (64 bit).tar"
     rm -Rf "$pkgdir/opt"
   fi
 

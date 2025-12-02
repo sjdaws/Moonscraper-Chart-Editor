@@ -7,7 +7,6 @@ pkgname=moonscraper-chart-editor
 sudo rm -Rf \
   "/opt/$pkgname" \
   "/usr/local/bin/$pkgname" \
-  "/usr/share/applications/$pkgname.desktop" \
-  "/usr/share/pixmaps/$pkgname"
+  "/usr/share/applications/$pkgname.desktop"
 
 echo -e "\nUninstall complete.\n"

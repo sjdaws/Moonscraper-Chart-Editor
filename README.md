@@ -23,20 +23,21 @@ Follow the instructions below for your desired platform to build and run from so
 ### All Platforms
 1. Download and install Unity 6000.0.62f1
 2. Run Unity and open the project folder with it
-3. Use the menu option Build Processes > Build Full Releases
-  - Note that 7zip and Inno Setup are required to be installed to build distributables and installers respectively. 
+3. Select a platform from the `Build For` menu
 
 ### Runtime dependencies (Windows)
 Required runtime dependencies are included with the build.
 
 ### Runtime dependencies (Linux)
-The application requires the following dependencies to be installed:
-- `ffmpeg sdl2 libx11-6 libgtk-3-0`
-- `libbass` (included with the build)
+The application requires a running X11 compatible desktop such as GNOME or KDE.
+
+You will also need to install:
+
+- `ffmpeg`
+- `sdl2` - for some distributions this will required the `-dev` or `-devel` version to work correctly
+- `gtk3` - this is usually installed automatically with X11
 
 A [`PKGBUILD` file for Arch Linux](aur/PKGBUILD) is included in the repository.
-
-Other distribution packagers can use the `PKGBUILD` file for reference.
 
 ## Who do I talk to?
 * Alexander "FireFox" Ong
