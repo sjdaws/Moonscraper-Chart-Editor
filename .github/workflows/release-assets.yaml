@@ -1,12 +1,31 @@
-name: Create release assets
+name: Create release
 
 on:
-  release:
-    types:
-      - published
+  push:
+    branches: main
 
 jobs:
+  create:
+    name: Create release
+    runs-on: ubuntu-latest
+    outputs:
+      release-id: ${{ steps.create-release.outputs.id }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Get version
+        id: get-version
+        run: |
+          echo "version=$(grep -oP 'bundleVersion: \K(.+)' < ${{ github.workspace }}/Moonscraper\ Chart\ Editor/ProjectSettings/ProjectSettings.asset)" >> "$GITHUB_OUTPUT"
+      - name: Create release
+        id: create-release
+        uses: softprops/action-gh-release@v2
+        with:
+          draft: true
+          prerelease: false
+          tag_name: v${{ steps.get-version.outputs.version }}
   build:
+    needs: create
     name: Build Moonscraper
     runs-on: ${{ matrix.os }}
     permissions:
@@ -55,10 +74,10 @@ jobs:
         uses: xresloader/upload-to-github-release@v1
         with:
           file: ${{ env.build-path }}/*
-          release_id: ${{ github.event.release.id }}
+          release_id: ${{ needs.create.outputs.release-id }}
           verbose: true
   release:
-    needs: build
+    needs: [create, build]
     name: Release Moonscraper
     runs-on: ubuntu-latest
     permissions:
@@ -68,7 +87,5 @@ jobs:
         uses: irongut/EditRelease@v1.2.0
         with:
           draft: false
-          id: ${{ github.event.release.id }}
-          prerelease: false
+          id: ${{ needs.create.outputs.release-id }}
           token: ${{ github.token }}
-

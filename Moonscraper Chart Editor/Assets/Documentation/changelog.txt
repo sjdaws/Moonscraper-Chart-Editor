@@ -1,4 +1,4 @@
-1.6.1
+1.6.2
     CHANGES
     -Remove Windows x86 build, all Windows builds will be x64 only
     -Add .deb and .rpm packages for Linux builds
