@@ -1,16 +1,22 @@
-1.7.0
-	FIXES
-	-Offload Linux OGG encoding to OS ffmpeg installation for greater compatibility
+1.7.1
+    CHANGES
+    -Update SDL2-CS wrapper
+    -Update SDL2.dll to 2.32.6
+    -Bundle SDL2.so for Linux builds
 
-	CHANGES
-	-Update BASS to 2.4.18
-	-Update BASSOPUS to 2.4.3
-	-Update BASSEnc to 2.4.17
-	-Update BASSEnc_OGG to 2.4.3
-	-Update BASSEnc_OPUS to 2.4.4
-	-Update BASS FX to 2.4.12.6
-	-Align BASS libraries across Linux/Windows
-	-Replace Bass.Net with ManagedBass 4.0.2
+1.7.0
+    FIXES
+    -Offload Linux OGG encoding to OS ffmpeg installation for greater compatibility
+
+    CHANGES
+    -Update BASS to 2.4.18
+    -Update BASSOPUS to 2.4.3
+    -Update BASSEnc to 2.4.17
+    -Update BASSEnc_OGG to 2.4.3
+    -Update BASSEnc_OPUS to 2.4.4
+    -Update BASS FX to 2.4.12.6
+    -Align BASS libraries across Linux/Windows
+    -Replace Bass.Net with ManagedBass 4.0.2
 
 1.6.2
     CHANGES

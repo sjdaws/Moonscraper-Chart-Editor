@@ -7,7 +7,7 @@ pkgdesc="A song editor for Guitar Hero style rhythm games made in Unity"
 url='https://github.com/FireFox2000000/moonscraper-chart-editor'
 license=(BSD)
 arch=(x86_64)
-depends=('mono' 'sdl2' 'ffmpeg' 'libx11' 'gtk3')
+depends=('mono' 'ffmpeg' 'libx11' 'gtk3')
 makedepends=('git' 'unityhub' 'cmake'
   # runtime dependencies for Unity3d
   'desktop-file-utils' 'xdg-utils' 'gcc-libs' 'gconf' 'nss'
