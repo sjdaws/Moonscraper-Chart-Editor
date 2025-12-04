@@ -29,13 +29,9 @@ Follow the instructions below for your desired platform to build and run from so
 Required runtime dependencies are included with the build.
 
 ### Runtime dependencies (Linux)
-The application requires a running X11 compatible desktop such as GNOME or KDE.
+The application requires a running X11 compatible desktop such as GNOME or KDE and `gtk3`.
 
-You will also need to install:
-
-- `ffmpeg`
-- `sdl2` - for some distributions this will required the `-dev` or `-devel` version to work correctly
-- `gtk3` - this is usually installed automatically with X11
+If you want to convert audio to ogg for Clone Hero charts you will also need to install `ffmpeg`.
 
 A [`PKGBUILD` file for Arch Linux](aur/PKGBUILD) is included in the repository.
 
